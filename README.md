@@ -3,7 +3,7 @@
 # first npm install then run the application
 # Update the Database URL
 
-Users Endpoints ======================
+# Users Endpoints ======================
 # create user-sign Up (POST) => /users 
 # user login-signIn (POST) => /users/login
 # user logout (POST) => /users/logout
@@ -12,7 +12,7 @@ Users Endpoints ======================
 # Delete the user (DELETE) => /users/:id
 
 
-Task Endpoints =========================
+# Task Endpoints =========================
 # create a task (POST) => /tasks
 # get all task by priority (GET) => /tasks/priority
 # get loggedIn(current) user tasks (GET) => /tasks/priority/me
