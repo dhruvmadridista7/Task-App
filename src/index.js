@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(userRouter);
 app.use(taskRouter);
 
-const PORT = 5003;
-app.listen(PORT, () => {
-    console.log(`server is running at ${PORT}`);
+const port = process.env.PORT || 5003;
+app.listen(port, () => {
+    console.log(`server is running at ${port}`);
 })

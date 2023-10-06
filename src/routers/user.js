@@ -20,6 +20,7 @@ router.post('/users', async (req,res) => {
     }
 })
 
+// not yet added in readme
 router.get('/users', async (req, res) => {
     try {
         const users = await User.find({});

@@ -3,7 +3,6 @@ const auth = require('../middleware/auth');
 const Task = require('../models/task');
 const router = new express.Router();
 const User = require('../models/user');
-const nodemailer = require('nodemailer');
 
 // create a task
 router.post('/tasks', auth, async (req,res) => {
@@ -33,11 +32,13 @@ router.get('/tasks/priority', async (req,res) => {
     }
 })
 
+
+
+// get all task related to user(assigned task + own tasks) and queue by their priority.
 router.get('/tasks/priority/me', auth, async (req,res) => {
-    // Queue to hold tasks ordered by priority
     const taskQueue = [];
 
-    // Function to add a task to the queue in the correct position based on priority
+    // add a task to the queue in the correct position based on priority
     function enqueueTask(task) {
         const index = taskQueue.findIndex((queuedTask) => queuedTask.priority > task.priority);
         if (index === -1) {
@@ -48,21 +49,25 @@ router.get('/tasks/priority/me', auth, async (req,res) => {
     }
 
     try {
-        // console.log(req.user);
         await req.user.populate('tasks');
         const tasks = req.user.tasks
 
-        // Enqueue the pending tasks into the priority queue
-        for (const task of tasks) {
-            enqueueTask(task);
+        // get assigned tasks
+        const assignedTasks = await Task.find({ collaborators : req.user.id });
+        for(const assignedtask of assignedTasks) {
+            if(assignedtask.status === 'pending'){
+                tasks.push(assignedtask);
+            }
         }
 
-        // res.status(200).send(req.user.tasks);
-        if(taskQueue !== undefined) {
-            res.status(200).send(taskQueue);
-        } else {
-            res.status(200).send(tasks);
+        // Enqueue the pending tasks into the priority queue
+        for (const task of tasks) {
+            if(task.status === 'pending') {
+                enqueueTask(task);
+            }
         }
+
+        res.status(200).send(taskQueue);
     } catch (error) {
         res.status(500).send(error.message);
     }
